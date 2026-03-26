@@ -72,9 +72,14 @@ export const api = {
 
   // Sources
   getSources: () => apiFetch<any[]>('/admin/sources'),
-  
+  createSource: (data: any) =>
+    apiFetch<any>('/admin/sources', { method: 'POST', body: JSON.stringify(data) }),
   runSource: (id: string) =>
     apiFetch<any>(`/admin/sources/${id}/run`, { method: 'POST' }),
+  validateSource: (id: string) =>
+    apiFetch<any>(`/admin/sources/${id}/validate`, { method: 'POST' }),
+  validateAllSources: () =>
+    apiFetch<any>('/admin/sources/validate-all', { method: 'POST' }),
 
   // Integrations
   getIntegrations: (clientId?: string) =>
