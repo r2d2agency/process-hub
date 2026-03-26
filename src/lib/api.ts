@@ -6,11 +6,12 @@ export async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const token = localStorage.getItem('jurismonitor_token');
+  const hasBody = options.body !== undefined;
   
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
@@ -18,6 +19,10 @@ export async function apiFetch<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Network error' }));
+    if (response.status === 401) {
+      localStorage.removeItem('jurismonitor_token');
+      localStorage.removeItem('jurismonitor_user');
+    }
     throw new Error(error.error || `Request failed: ${response.status}`);
   }
 
