@@ -16,4 +16,4 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/package.json ./
 EXPOSE 3000
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
+CMD ["sh", "-c", "npx prisma migrate resolve --rolled-back 20240103000000_add_legal_monitoring 2>/dev/null; npx prisma migrate deploy && node dist/server.js"]
