@@ -1,7 +1,6 @@
 FROM node:20-bookworm AS build
 WORKDIR /app
 RUN apt-get update && apt-get install -y openssl libssl3 && rm -rf /var/lib/apt/lists/*
-ENV PRISMA_CLI_BINARY_TARGETS="debian-openssl-3.0.x,native"
 COPY package*.json ./
 RUN npm install
 COPY prisma ./prisma
