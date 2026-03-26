@@ -17,6 +17,7 @@ import Integrations from "./pages/Integrations";
 import SettingsPage from "./pages/SettingsPage";
 import Users from "./pages/Users";
 import Logs from "./pages/Logs";
+import DatajudConsulta from "./pages/DatajudConsulta";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
             <Route path="/logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />
+            <Route path="/datajud" element={<ProtectedRoute><DatajudConsulta /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

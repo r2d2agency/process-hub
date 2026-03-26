@@ -14,6 +14,7 @@ import { dashboardRoutes } from './routes/dashboard';
 import { usersRoutes } from './routes/users';
 import { externalApiRoutes } from './routes/external-api';
 import { logRoutes } from './routes/logs';
+import { datajudRoutes } from './routes/datajud';
 import { safeSystemLog, sanitizeForLog, toErrorMessage } from './lib/system-log';
 
 export const prisma = new PrismaClient();
@@ -108,6 +109,7 @@ async function start() {
   await app.register(integrationRoutes, { prefix: '/integrations' });
   await app.register(usersRoutes, { prefix: '/admin/users' });
   await app.register(logRoutes, { prefix: '/admin/logs' });
+  await app.register(datajudRoutes, { prefix: '/datajud' });
 
   // External API (API Key or JWT)
   await app.register(externalApiRoutes, { prefix: '/api/v1' });
