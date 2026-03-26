@@ -161,7 +161,7 @@ export async function datajudRoutes(app: FastifyInstance) {
         return reply.status(response.status).send({ error: `DataJud retornou ${response.status}`, details: errText.substring(0, 500) });
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       // Transform ES response to friendlier format
       const hits = data.hits?.hits || [];
@@ -274,7 +274,7 @@ export async function datajudRoutes(app: FastifyInstance) {
         });
 
         if (!response.ok) return null;
-        const data = await response.json();
+        const data: any = await response.json();
         const hits = data.hits?.hits || [];
         return hits.map((hit: any) => ({
           tribunal: t.toUpperCase(),
