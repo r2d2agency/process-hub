@@ -16,6 +16,7 @@ import Notifications from "./pages/Notifications";
 import Integrations from "./pages/Integrations";
 import SettingsPage from "./pages/SettingsPage";
 import Users from "./pages/Users";
+import Logs from "./pages/Logs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/integrations" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+            <Route path="/logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
