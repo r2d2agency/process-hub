@@ -173,6 +173,9 @@ export default function Sources() {
                           <Button variant="ghost" size="icon" className="h-7 w-7" title="Validar fonte" onClick={() => validateMutation.mutate(source.id)}>
                             <Activity className="w-3 h-3" />
                           </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" title="Excluir fonte" onClick={() => deleteMutation.mutate(source.id)}>
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
