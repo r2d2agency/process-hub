@@ -3,6 +3,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import Login from "./pages/Login";
 import Index from "./pages/Index";
 import Clients from "./pages/Clients";
 import Rules from "./pages/Rules";
@@ -12,6 +15,7 @@ import MatchesPage from "./pages/Matches";
 import Notifications from "./pages/Notifications";
 import Integrations from "./pages/Integrations";
 import SettingsPage from "./pages/SettingsPage";
+import Users from "./pages/Users";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,20 +25,24 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/clients" element={<Clients />} />
-          <Route path="/rules" element={<Rules />} />
-          <Route path="/sources" element={<Sources />} />
-          <Route path="/publications" element={<Publications />} />
-          <Route path="/matches" element={<MatchesPage />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/integrations" element={<Integrations />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+            <Route path="/clients" element={<ProtectedRoute><Clients /></ProtectedRoute>} />
+            <Route path="/rules" element={<ProtectedRoute><Rules /></ProtectedRoute>} />
+            <Route path="/sources" element={<ProtectedRoute><Sources /></ProtectedRoute>} />
+            <Route path="/publications" element={<ProtectedRoute><Publications /></ProtectedRoute>} />
+            <Route path="/matches" element={<ProtectedRoute><MatchesPage /></ProtectedRoute>} />
+            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+            <Route path="/integrations" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+            <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

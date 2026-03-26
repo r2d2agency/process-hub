@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Users, label: "Clientes", path: "/clients" },
+  { icon: Shield, label: "Usuários", path: "/users" },
   { icon: BookOpen, label: "Regras", path: "/rules" },
   { icon: Database, label: "Fontes", path: "/sources" },
   { icon: FileText, label: "Publicações", path: "/publications" },
