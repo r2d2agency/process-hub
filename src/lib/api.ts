@@ -6,12 +6,15 @@ export async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const token = localStorage.getItem('jurismonitor_token');
-  const hasBody = options.body !== undefined;
+  const method = (options.method || 'GET').toUpperCase();
+  const needsBody = ['POST', 'PUT', 'PATCH'].includes(method);
+  const body = options.body ?? (needsBody ? '{}' : undefined);
   
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
+    body,
     headers: {
-      ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
+      ...(body ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
