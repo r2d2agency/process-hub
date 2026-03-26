@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { prisma } from '../server';
+import { safeSystemLog, toErrorMessage } from '../lib/system-log';
 
 export async function sourceRoutes(app: FastifyInstance) {
   app.addHook('preHandler', (app as any).authenticate);
@@ -74,6 +75,11 @@ export async function sourceRoutes(app: FastifyInstance) {
   // Bulk seed all Brazilian court sources
   app.post('/seed', async (request, reply) => {
     try {
+      await safeSystemLog(prisma, {
+        source: 'seed',
+        message: 'Iniciando população de fontes',
+      }, app.log);
+
       const sources = [
         { name: 'STF - Supremo Tribunal Federal', type: 'HTML', url: 'https://portal.stf.jus.br/servicos/dje/' },
         { name: 'STJ - Superior Tribunal de Justiça', type: 'HTML', url: 'https://scon.stj.jus.br/SCON/' },
@@ -142,15 +148,20 @@ export async function sourceRoutes(app: FastifyInstance) {
 
       return { ok: true, total: sources.length, created, skipped: sources.length - created };
     } catch (error: any) {
-      await prisma.systemLog.create({
-        data: {
-          level: 'error',
-          source: 'seed',
-          message: `Erro no seed de fontes: ${error.message}`,
+      await safeSystemLog(prisma, {
+        level: 'error',
+        source: 'seed',
+        message: `Erro no seed de fontes: ${toErrorMessage(error)}`,
+        meta: {
+          body: request.body,
+          params: request.params,
+          query: request.query,
+          stack: error?.stack,
         },
-      }).catch(() => {});
+      }, app.log);
+
       app.log.error(error, 'seed_sources_error');
-      return reply.status(500).send({ error: error.message || 'Erro ao popular fontes' });
+      return reply.status(500).send({ error: toErrorMessage(error) || 'Erro ao popular fontes' });
     }
   });
 
