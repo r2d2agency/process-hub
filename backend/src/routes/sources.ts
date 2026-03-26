@@ -72,7 +72,7 @@ export async function sourceRoutes(app: FastifyInstance) {
   });
 
   // Bulk seed all Brazilian court sources
-  app.post('/seed', async () => {
+  app.post('/seed', async (request, reply) => {
     try {
       const sources = [
         { name: 'STF - Supremo Tribunal Federal', type: 'HTML', url: 'https://portal.stf.jus.br/servicos/dje/' },
@@ -149,7 +149,8 @@ export async function sourceRoutes(app: FastifyInstance) {
           message: `Erro no seed de fontes: ${error.message}`,
         },
       }).catch(() => {});
-      throw error;
+      app.log.error(error, 'seed_sources_error');
+      return reply.status(500).send({ error: error.message || 'Erro ao popular fontes' });
     }
   });
 
