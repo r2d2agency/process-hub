@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  document  String?
+  email     String?
+  phone     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  rules         MonitorRule[]
+  notifications Notification[]
+  integrations  Integration[]
+
+  @@map("clients")
+}
+
+model MonitorRule {
+  id        String   @id @default(uuid())
+  clientId  String   @map("client_id")
+  type      String   @default("keyword")
+  value     String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  client  Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  matches Match[]
+
+  @@map("monitor_rules")
+}
+
+model Source {
+  id           String   @id @default(uuid())
+  name         String
+  type         String
+  url          String?
+  active       Boolean  @default(true)
+  lastRunAt    DateTime? @map("last_run_at")
+  status       String   @default("idle")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  publications Publication[]
+
+  @@map("sources")
+}
+
+model Publication {
+  id          String   @id @default(uuid())
+  sourceId    String   @map("source_id")
+  title       String?
+  content     String
+  publishedAt DateTime? @map("published_at")
+  externalId  String?  @map("external_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  source  Source  @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  matches Match[]
+
+  @@map("publications")
+}
+
+model Match {
+  id            String   @id @default(uuid())
+  ruleId        String   @map("rule_id")
+  publicationId String   @map("publication_id")
+  snippet       String?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  rule        MonitorRule  @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  publication Publication  @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  @@map("matches")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  clientId  String   @map("client_id")
+  channel   String   @default("email")
+  subject   String?
+  body      String
+  status    String   @default("pending")
+  sentAt    DateTime? @map("sent_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Integration {
+  id        String   @id @default(uuid())
+  clientId  String   @map("client_id")
+  type      String
+  config    Json     @default("{}")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("integrations")
+}
