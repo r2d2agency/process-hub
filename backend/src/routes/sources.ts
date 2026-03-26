@@ -138,7 +138,7 @@ export async function sourceRoutes(app: FastifyInstance) {
           source: 'seed',
           message: `Seed de fontes: ${created} criadas, ${sources.length - created} já existiam`,
         },
-      });
+      }).catch(() => {});
 
       return { ok: true, total: sources.length, created, skipped: sources.length - created };
     } catch (error: any) {
