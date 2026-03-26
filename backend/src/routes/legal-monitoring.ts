@@ -59,7 +59,7 @@ export async function legalMonitoringRoutes(app: FastifyInstance) {
       params.push(`%${DataJudEndpointResolver.normalizeProcessNumber(q.numero_processo)}%`);
     }
     if (q.tribunal) { conditions.push(`tribunal = $${idx++}`); params.push(q.tribunal); }
-    if (q.cliente_id) { conditions.push(`cliente_id = $${idx++}::uuid`); params.push(q.cliente_id); }
+    if (q.cliente_id) { conditions.push(`cliente_id = $${idx++}`); params.push(q.cliente_id); }
     if (q.status_monitoramento) { conditions.push(`status_monitoramento = $${idx++}::monitoring_status`); params.push(q.status_monitoramento); }
     if (q.prioridade) { conditions.push(`prioridade = $${idx++}::monitoring_priority`); params.push(q.prioridade); }
     if (q.possui_alerta_pendente === 'true') { conditions.push(`possui_alerta_pendente = true`); }
@@ -105,7 +105,7 @@ export async function legalMonitoringRoutes(app: FastifyInstance) {
 
     // Check for duplicate
     const existing = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT id FROM processos_monitorados WHERE numero_processo_normalizado = $1 AND cliente_id = $2::uuid`,
+      `SELECT id FROM processos_monitorados WHERE numero_processo_normalizado = $1 AND cliente_id = $2`,
       normalized, body.cliente_id || null
     );
     if (existing.length > 0) {
@@ -114,7 +114,7 @@ export async function legalMonitoringRoutes(app: FastifyInstance) {
 
     const [result] = await prisma.$queryRawUnsafe<any[]>(
       `INSERT INTO processos_monitorados (numero_processo, numero_processo_normalizado, tribunal, fonte_principal, cliente_id, advogado_responsavel_id, tags, observacoes_internas, prioridade, frequencia_monitoramento, status_monitoramento, canal_alerta_preferencial)
-       VALUES ($1, $2, $3, 'datajud', $4::uuid, $5::uuid, $6::text[], $7, $8::monitoring_priority, $9, 'ativo'::monitoring_status, $10::alert_channel)
+       VALUES ($1, $2, $3, 'datajud', $4, $5, $6::text[], $7, $8::monitoring_priority, $9, 'ativo'::monitoring_status, $10::alert_channel)
        RETURNING *`,
       numero, normalized, tribunal,
       body.cliente_id || null,
@@ -152,7 +152,7 @@ export async function legalMonitoringRoutes(app: FastifyInstance) {
         const normalized = DataJudEndpointResolver.normalizeProcessNumber(numero);
         await prisma.$queryRawUnsafe(
           `INSERT INTO processos_monitorados (numero_processo, numero_processo_normalizado, tribunal, fonte_principal, cliente_id, prioridade, frequencia_monitoramento)
-           VALUES ($1, $2, $3, 'datajud', $4::uuid, $5::monitoring_priority, $6)
+           VALUES ($1, $2, $3, 'datajud', $4, $5::monitoring_priority, $6)
            ON CONFLICT (numero_processo_normalizado, cliente_id) DO NOTHING`,
           numero, normalized, tribunal, item.cliente_id || null, item.prioridade || 'media', item.frequencia_monitoramento || '6h'
         );

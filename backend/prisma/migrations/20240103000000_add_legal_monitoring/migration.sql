@@ -14,8 +14,8 @@ CREATE TABLE processos_monitorados (
   numero_processo_normalizado TEXT NOT NULL,
   tribunal TEXT NOT NULL,
   fonte_principal TEXT NOT NULL DEFAULT 'datajud',
-  cliente_id UUID REFERENCES clients(id) ON DELETE CASCADE,
-  advogado_responsavel_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  cliente_id TEXT REFERENCES clients(id) ON DELETE CASCADE,
+  advogado_responsavel_id TEXT REFERENCES users(id) ON DELETE SET NULL,
   tags TEXT[] DEFAULT '{}',
   observacoes_internas TEXT,
   prioridade monitoring_priority NOT NULL DEFAULT 'media',
@@ -124,7 +124,7 @@ CREATE INDEX idx_log_integ_criado ON logs_integracao(criado_em);
 -- 7. configuracoes_monitoramento
 CREATE TABLE configuracoes_monitoramento (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  cliente_id UUID UNIQUE REFERENCES clients(id) ON DELETE CASCADE,
+  cliente_id TEXT UNIQUE REFERENCES clients(id) ON DELETE CASCADE,
   frequencia_padrao TEXT NOT NULL DEFAULT '6h',
   canais_alerta_padrao alert_channel[] DEFAULT '{email}',
   ativo BOOLEAN NOT NULL DEFAULT true,
