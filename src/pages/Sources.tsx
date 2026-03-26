@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiFetch } from "@/lib/api";
-import { Play, Plus, Activity } from "lucide-react";
+import { Play, Plus, Activity, Database, CheckCircle, Trash2 } from "lucide-react";
 
 interface Source {
   id: string;
