@@ -11,6 +11,7 @@ import { notificationRoutes } from './routes/notifications';
 import { sourceRoutes } from './routes/sources';
 import { integrationRoutes } from './routes/integrations';
 import { dashboardRoutes } from './routes/dashboard';
+import { usersRoutes } from './routes/users';
 
 export const prisma = new PrismaClient();
 
@@ -39,6 +40,7 @@ async function start() {
   await app.register(notificationRoutes, { prefix: '/notifications' });
   await app.register(sourceRoutes, { prefix: '/admin/sources' });
   await app.register(integrationRoutes, { prefix: '/integrations' });
+  await app.register(usersRoutes, { prefix: '/admin/users' });
 
   // Health check
   app.get('/health', async () => ({ status: 'ok' }));
