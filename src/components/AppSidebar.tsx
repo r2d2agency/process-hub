@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Users, BookOpen, FileText, GitCompare, Bell, Database,
-  Settings, Link2, Shield, ChevronLeft, ChevronRight, Scale, ScrollText
+  Settings, Link2, Shield, ChevronLeft, ChevronRight, Scale, ScrollText, Search
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,7 @@ const menuItems = [
   { icon: GitCompare, label: "Matches", path: "/matches" },
   { icon: Bell, label: "Notificações", path: "/notifications" },
   { icon: Link2, label: "Integrações", path: "/integrations" },
+  { icon: Search, label: "Consulta DataJud", path: "/datajud" },
   { icon: ScrollText, label: "Logs", path: "/logs" },
   { icon: Settings, label: "Configurações", path: "/settings" },
 ];
