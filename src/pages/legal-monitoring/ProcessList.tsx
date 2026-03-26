@@ -24,7 +24,7 @@ export default function ProcessList() {
   if (prioridadeFilter) params.prioridade = prioridadeFilter;
 
   const { data, isLoading, refetch } = useApiQuery<any>(
-    ["legal-monitoring-processes", page, search, statusFilter, prioridadeFilter],
+    ["legal-monitoring-processes", String(page), search, statusFilter, prioridadeFilter],
     `/api/legal-monitoring/processes?${new URLSearchParams(params).toString()}`
   );
 
