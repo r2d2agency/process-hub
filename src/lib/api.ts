@@ -98,4 +98,45 @@ export const api = {
   
   testWhatsApp: (clientId: string) =>
     apiFetch<any>('/integrations/test-send', { method: 'POST', body: JSON.stringify({ clientId }) }),
+
+  // Legal Monitoring
+  legalMonitoring: {
+    dashboard: () => apiFetch<any>('/api/legal-monitoring/dashboard'),
+    getProcesses: (params: Record<string, any> = {}) => {
+      const query = new URLSearchParams(params).toString();
+      return apiFetch<any>(`/api/legal-monitoring/processes?${query}`);
+    },
+    getProcess: (id: string) => apiFetch<any>(`/api/legal-monitoring/processes/${id}`),
+    createProcess: (data: any) =>
+      apiFetch<any>('/api/legal-monitoring/processes', { method: 'POST', body: JSON.stringify(data) }),
+    updateProcess: (id: string, data: any) =>
+      apiFetch<any>(`/api/legal-monitoring/processes/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    importProcesses: (processos: any[]) =>
+      apiFetch<any>('/api/legal-monitoring/processes/import', { method: 'POST', body: JSON.stringify({ processos }) }),
+    pauseProcess: (id: string) =>
+      apiFetch<any>(`/api/legal-monitoring/processes/${id}/pause`, { method: 'POST' }),
+    resumeProcess: (id: string) =>
+      apiFetch<any>(`/api/legal-monitoring/processes/${id}/resume`, { method: 'POST' }),
+    archiveProcess: (id: string) =>
+      apiFetch<any>(`/api/legal-monitoring/processes/${id}/archive`, { method: 'POST' }),
+    deleteProcess: (id: string) =>
+      apiFetch<any>(`/api/legal-monitoring/processes/${id}`, { method: 'DELETE' }),
+    reprocessProcess: (id: string) =>
+      apiFetch<any>(`/api/legal-monitoring/processes/${id}/reprocess`, { method: 'POST' }),
+    getChecks: (id: string) => apiFetch<any>(`/api/legal-monitoring/processes/${id}/checks`),
+    getMovements: (id: string) => apiFetch<any>(`/api/legal-monitoring/processes/${id}/movements`),
+    getEvents: (id: string) => apiFetch<any>(`/api/legal-monitoring/processes/${id}/events`),
+    getAlerts: (id: string) => apiFetch<any>(`/api/legal-monitoring/processes/${id}/alerts`),
+    getLogs: (id: string) => apiFetch<any>(`/api/legal-monitoring/processes/${id}/logs`),
+    getAllAlerts: (params: Record<string, any> = {}) => {
+      const query = new URLSearchParams(params).toString();
+      return apiFetch<any>(`/api/legal-monitoring/alerts?${query}`);
+    },
+    retryAlert: (id: string) =>
+      apiFetch<any>(`/api/legal-monitoring/alerts/${id}/retry`, { method: 'POST' }),
+    getSettings: () => apiFetch<any>('/api/legal-monitoring/settings'),
+    updateSettings: (data: any) =>
+      apiFetch<any>('/api/legal-monitoring/settings', { method: 'PUT', body: JSON.stringify(data) }),
+    health: () => apiFetch<any>('/api/legal-monitoring/health'),
+  },
 };
