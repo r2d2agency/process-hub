@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Users, BookOpen, FileText, GitCompare, Bell, Database,
-  Settings, Link2, Shield, ChevronLeft, ChevronRight, Scale, ScrollText, Search
+  Settings, Link2, Shield, ChevronLeft, ChevronRight, Scale, ScrollText, Search,
+  Eye, AlertTriangle, Gavel
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,13 @@ const menuItems = [
   { icon: Search, label: "Consulta DataJud", path: "/datajud" },
   { icon: ScrollText, label: "Logs", path: "/logs" },
   { icon: Settings, label: "Configurações", path: "/settings" },
+];
+
+const monitoringItems = [
+  { icon: Gavel, label: "Painel", path: "/legal-monitoring" },
+  { icon: Eye, label: "Processos", path: "/legal-monitoring/processes" },
+  { icon: AlertTriangle, label: "Alertas", path: "/legal-monitoring/alerts" },
+  { icon: Settings, label: "Config. Monitor", path: "/legal-monitoring/settings" },
 ];
 
 export function AppSidebar() {
@@ -46,6 +54,33 @@ export function AppSidebar() {
 
       <nav className="flex-1 py-4 space-y-1 px-2 overflow-y-auto">
         {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              )}
+            >
+              <item.icon className="w-4 h-4 shrink-0" />
+              {!collapsed && <span>{item.label}</span>}
+            </Link>
+          );
+        })}
+
+        {/* Monitoring section */}
+        {!collapsed && (
+          <div className="pt-3 pb-1 px-3">
+            <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">Monitoramento</p>
+          </div>
+        )}
+        {collapsed && <div className="border-t border-sidebar-border my-2" />}
+
+        {monitoringItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Link
