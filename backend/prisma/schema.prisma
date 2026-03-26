@@ -124,3 +124,17 @@ model Integration {
 
   @@map("integrations")
 }
+
+model SystemLog {
+  id        String   @id @default(uuid())
+  level     String   @default("info")
+  source    String   @default("system")
+  message   String
+  meta      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([level])
+  @@index([source])
+  @@index([createdAt])
+  @@map("system_logs")
+}
