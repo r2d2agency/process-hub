@@ -12,6 +12,7 @@ import { sourceRoutes } from './routes/sources';
 import { integrationRoutes } from './routes/integrations';
 import { dashboardRoutes } from './routes/dashboard';
 import { usersRoutes } from './routes/users';
+import { externalApiRoutes } from './routes/external-api';
 
 export const prisma = new PrismaClient();
 
@@ -30,7 +31,7 @@ async function start() {
     }
   });
 
-  // Routes
+  // Internal routes (JWT auth)
   await app.register(authRoutes, { prefix: '/auth' });
   await app.register(dashboardRoutes, { prefix: '/admin' });
   await app.register(clientRoutes, { prefix: '/clients' });
@@ -42,8 +43,11 @@ async function start() {
   await app.register(integrationRoutes, { prefix: '/integrations' });
   await app.register(usersRoutes, { prefix: '/admin/users' });
 
+  // External API (API Key or JWT)
+  await app.register(externalApiRoutes, { prefix: '/api/v1' });
+
   // Health check
-  app.get('/health', async () => ({ status: 'ok' }));
+  app.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }));
 
   const port = parseInt(process.env.PORT || '3000');
   await app.listen({ port, host: '0.0.0.0' });

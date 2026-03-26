@@ -1,10 +1,27 @@
+import { useQuery } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { mockMatches } from "@/lib/mock-data";
+import { Skeleton } from "@/components/ui/skeleton";
+import { apiFetch } from "@/lib/api";
+
+interface Match {
+  id: string;
+  snippet?: string;
+  createdAt: string;
+  rule: { type: string; value: string; client: { name: string } };
+  publication: { title?: string; content: string; source: { name: string } };
+}
 
 export default function MatchesPage() {
+  const { data, isLoading } = useQuery<{ data: Match[]; total: number }>({
+    queryKey: ["matches"],
+    queryFn: () => apiFetch("/matches?limit=50"),
+  });
+
+  const matches = data?.data || [];
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -14,34 +31,34 @@ export default function MatchesPage() {
         </div>
         <Card>
           <CardContent className="pt-6">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Regra</TableHead>
-                  <TableHead>Fonte</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Processo</TableHead>
-                  <TableHead>Notificado</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockMatches.map(m => (
-                  <TableRow key={m.id}>
-                    <TableCell className="text-sm font-medium">{m.clientName}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{m.rule}</TableCell>
-                    <TableCell><Badge variant="outline" className="text-[10px] font-mono">{m.source}</Badge></TableCell>
-                    <TableCell className="text-sm">{m.date}</TableCell>
-                    <TableCell className="text-sm font-mono">{m.process}</TableCell>
-                    <TableCell>
-                      <Badge variant={m.notified ? "default" : "secondary"} className="text-[10px]">
-                        {m.notified ? "Sim" : "Não"}
-                      </Badge>
-                    </TableCell>
+            {isLoading ? (
+              <div className="space-y-3">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}</div>
+            ) : matches.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">Nenhum match encontrado</p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Regra</TableHead>
+                    <TableHead>Fonte</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Trecho</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {matches.map(m => (
+                    <TableRow key={m.id}>
+                      <TableCell className="text-sm font-medium">{m.rule.client.name}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{m.rule.type}: {m.rule.value}</TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px] font-mono">{m.publication.source?.name}</Badge></TableCell>
+                      <TableCell className="text-sm">{new Date(m.createdAt).toLocaleDateString("pt-BR")}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground max-w-xs truncate">{m.snippet || m.publication.content?.substring(0, 80)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </div>
