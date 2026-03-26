@@ -45,14 +45,14 @@ export async function sourceRoutes(app: FastifyInstance) {
         results.push({ id: source.id, name: source.name, reachable, statusCode: response.status });
 
         // Log result
-        await prisma.systemLog.create({
+         await prisma.systemLog.create({
           data: {
             level: reachable ? 'info' : 'warn',
             source: 'source-validation',
             message: `Validação: ${source.name} - ${reachable ? 'acessível' : 'inacessível'}`,
             meta: JSON.stringify({ sourceId: source.id, statusCode: response.status }),
           },
-        });
+        }).catch(() => {});
       } catch (error: any) {
         await prisma.source.update({ where: { id: source.id }, data: { status: 'error' } });
         results.push({ id: source.id, name: source.name, reachable: false, error: error.message });
@@ -64,7 +64,7 @@ export async function sourceRoutes(app: FastifyInstance) {
             message: `Erro ao validar ${source.name}: ${error.message}`,
             meta: JSON.stringify({ sourceId: source.id }),
           },
-        });
+        }).catch(() => {});
       }
     }
 
